@@ -1,5 +1,6 @@
-const OAUTH_URL = 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token';
-const STATUS_URL = 'https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite';
+const CORS_PROXY = 'https://corsproxy.io/?';
+const OAUTH_URL = CORS_PROXY + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token';
+const STATUS_URL = CORS_PROXY + 'https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite';
 
 // Fortnite PC Client Credentials
 const CLIENT_ID = 'ec684b8c687f479fadea3cb2ad83f5c6';
