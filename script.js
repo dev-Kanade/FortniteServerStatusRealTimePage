@@ -1,6 +1,7 @@
 const CORS_PROXY = 'https://corsproxy.io/?';
-const OAUTH_URL = CORS_PROXY + encodeURIComponent('https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token');
-const STATUS_URL = CORS_PROXY + encodeURIComponent('https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite');
+// Note: Some proxies prefer raw URLs. Trying without encoding first.
+const OAUTH_URL = CORS_PROXY + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token';
+const STATUS_URL = CORS_PROXY + 'https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite';
 // Public Client ID for Fortnite (known public credential)
 const CLIENT_ID = 'MzQ0NmNkNzI2OTRjNGE0NDg1ZDgxYjc3YWRiYjIxNDE6OTIwOWQ0YTVlMjVhNDU3ZmI5YjA3NDg5ZDMxM2I0MWE=';
 
@@ -12,13 +13,14 @@ async function getAccessToken() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': `basic ${CLIENT_ID}`
+                'Authorization': `Basic ${CLIENT_ID}`
             },
             body: 'grant_type=client_credentials'
         });
 
         if (!response.ok) {
-            throw new Error(`Token fetch failed: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Token fetch failed: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
