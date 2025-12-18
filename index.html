@@ -72,12 +72,17 @@
     </div>
 
     <script>
-        const CLIENT_ID = "ec684b8c687f479fadea3cb2ad83f5c6";
+        const CLIENT_ID = "ec684b8c687f479fadea3cb2ad83f5c6"; // 2025年現在も有効なFortniteクライアントID
         const CLIENT_SECRET = "e1f31c211f28411386262d37a13fc84d";
         const BASIC_AUTH = btoa(CLIENT_ID + ":" + CLIENT_SECRET);
 
-        const TOKEN_ENDPOINT = "https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token";
-        const STATUS_ENDPOINT = "https://lightswitch-public-service-prod06.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite";
+        const TOKEN_ENDPOINT_ORIG = "https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token";
+        const STATUS_ENDPOINT_ORIG = "https://lightswitch-public-service-prod06.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite";
+
+        // corsproxy.ioを使ってCORS回避
+        const proxy = "https://corsproxy.io/?";
+        const TOKEN_ENDPOINT = proxy + encodeURIComponent(TOKEN_ENDPOINT_ORIG);
+        const STATUS_ENDPOINT = proxy + encodeURIComponent(STATUS_ENDPOINT_ORIG);
 
         const card = document.getElementById('statusCard');
         let accessToken = null;
@@ -91,11 +96,12 @@
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'Authorization': 'basic ' + BASIC_AUTH
                     },
-                    body: 'grant_type=client_credentials'
+                    body: 'grant_type=client_credentials&token_type=eg1'
                 });
 
                 if (!response.ok) {
-                    throw new Error('Token取得失敗: ' + response.status);
+                    const text = await response.text();
+                    throw new Error(`Token取得失敗: ${response.status} - ${text}`);
                 }
 
                 const data = await response.json();
@@ -107,7 +113,8 @@
                 card.innerHTML = `
                     <h2>Status</h2>
                     <h1>Error</h1>
-                    <p>トークン取得失敗</p>
+                    <p>トークン取得失敗: ${error.message}</p>
+                    <p>corsproxy.ioのレート制限や一時的な障害の可能性があります。</p>
                 `;
             }
         }
@@ -124,11 +131,12 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Status取得失敗: ' + response.status);
+                    const text = await response.text();
+                    throw new Error(`Status取得失敗: ${response.status} - ${text}`);
                 }
 
                 const data = await response.json();
-                const fortniteService = data[0]; // 通常配列の最初の要素がFortnite
+                const fortniteService = data.find(s => s.serviceInstanceId === 'Fortnite' || s.serviceId === 'Fortnite') || data[0];
 
                 if (fortniteService && fortniteService.status === 'UP') {
                     card.classList.remove('down');
@@ -155,7 +163,6 @@
                     <h2>Status</h2>
                     <h1>Error</h1>
                     <p>ステータス取得失敗: ${error.message}</p>
-                    <p>CORSエラーの可能性が高いです。</p>
                 `;
             }
         }
