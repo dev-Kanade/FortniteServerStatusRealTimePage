@@ -1,0 +1,48 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #2c3e50; /* Fallback */
+    z-index: -1;
+}
+
+.card {
+    width: 300px;
+    height: 150px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+    background-color: #95a5a6; /* Default/Loading */
+}
+
+.card h1 {
+    color: white;
+    font-size: 2.5rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+.card.online {
+    background-color: #2ecc71; /* Green */
+}
+
+.card.offline {
+    background-color: #e74c3c; /* Red */
+}
