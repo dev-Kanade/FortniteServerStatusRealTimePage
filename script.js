@@ -1,5 +1,6 @@
-const OAUTH_URL = 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token';
-const STATUS_URL = 'https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite';
+const CORS_PROXY = 'https://corsproxy.io/?';
+const OAUTH_URL = CORS_PROXY + encodeURIComponent('https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token');
+const STATUS_URL = CORS_PROXY + encodeURIComponent('https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite');
 // Public Client ID for Fortnite (known public credential)
 const CLIENT_ID = 'MzQ0NmNkNzI2OTRjNGE0NDg1ZDgxYjc3YWRiYjIxNDE6OTIwOWQ0YTVlMjVhNDU3ZmI5YjA3NDg5ZDMxM2I0MWE=';
 
