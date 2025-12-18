@@ -28,7 +28,7 @@ async function getAccessToken() {
     }
 }
 
-// Initial fetch and scheduled refresh
+
 getAccessToken();
 setInterval(getAccessToken, TOKEN_REFRESH_INTERVAL);
 
