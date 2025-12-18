@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortnite Server Status</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://cdn2.unrealengine.com/mkart-ch7s1-lobby-stage04-final-4k-v3-4096x2048-3cd8f01c1dc9.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+
+        .card {
+            width: 300px;
+            height: 400px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            transition: background-color 0.5s ease;
+        }
+
+        .card.up {
+            background-color: rgba(0, 128, 0, 0.7);
+            /* 緑 */
+        }
+
+        .card.down {
+            background-color: rgba(255, 0, 0, 0.7);
+            /* 赤 */
+        }
+
+        h1 {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-top: 50px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .loading {
+            font-size: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card" id="statusCard">
+        <h2>Status</h2>
+        <div class="loading">Loading...</div>
+    </div>
+
+    <script>
+        const CLIENT_ID = "ec684b8c687f479fadea3cb2ad83f5c6";
+        const CLIENT_SECRET = "e1f31c211f28411386262d37a13fc84d";
+        const BASIC_AUTH = btoa(CLIENT_ID + ":" + CLIENT_SECRET);
+
+        const TOKEN_ENDPOINT = "https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token";
+        const STATUS_ENDPOINT = "https://lightswitch-public-service-prod06.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite";
+
+        const card = document.getElementById('statusCard');
+        let accessToken = null;
+        let intervalId = null;
+
+        async function getAccessToken() {
+            try {
+                const response = await fetch(TOKEN_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': 'basic ' + BASIC_AUTH
+                    },
+                    body: 'grant_type=client_credentials'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Token取得失敗: ' + response.status);
+                }
+
+                const data = await response.json();
+                accessToken = data.access_token;
+                console.log('Token取得成功');
+            } catch (error) {
+                console.error(error);
+                card.classList.add('down');
+                card.innerHTML = `
+                    <h2>Status</h2>
+                    <h1>Error</h1>
+                    <p>トークン取得失敗</p>
+                `;
+            }
+        }
+
+        async function fetchStatus() {
+            if (!accessToken) return;
+
+            try {
+                const response = await fetch(STATUS_ENDPOINT, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'bearer ' + accessToken
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Status取得失敗: ' + response.status);
+                }
+
+                const data = await response.json();
+                const fortniteService = data[0]; // 通常配列の最初の要素がFortnite
+
+                if (fortniteService && fortniteService.status === 'UP') {
+                    card.classList.remove('down');
+                    card.classList.add('up');
+                    card.innerHTML = `
+                        <h2>Status</h2>
+                        <h1>Online</h1>
+                        <p>Fortnite servers are currently operational.</p>
+                    `;
+                } else {
+                    card.classList.remove('up');
+                    card.classList.add('down');
+                    card.innerHTML = `
+                        <h2>Status</h2>
+                        <h1>Offline</h1>
+                        <p>Fortnite servers are down or in maintenance.</p>
+                    `;
+                }
+            } catch (error) {
+                console.error(error);
+                card.classList.remove('up');
+                card.classList.add('down');
+                card.innerHTML = `
+                    <h2>Status</h2>
+                    <h1>Error</h1>
+                    <p>ステータス取得失敗: ${error.message}</p>
+                    <p>CORSエラーの可能性が高いです。</p>
+                `;
+            }
+        }
+
+        async function start() {
+            card.innerHTML = `<h2>Status</h2><div class="loading">トークン取得中...</div>`;
+            await getAccessToken();
+            if (accessToken) {
+                await fetchStatus();
+                if (intervalId) clearInterval(intervalId);
+                intervalId = setInterval(fetchStatus, 1000);
+            }
+        }
+
+        // ページロード時に開始
+        start();
+    </script>
+</body>
+
+</html>
