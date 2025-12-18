@@ -1,5 +1,5 @@
 const OAUTH_URL = 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token';
-const STATUS_URL = 'https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/fortnite/status';
+const STATUS_URL = 'https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite';
 // Public Client ID for Fortnite (known public credential)
 const CLIENT_ID = 'MzQ0NmNkNzI2OTRjNGE0NDg1ZDgxYjc3YWRiYjIxNDE6OTIwOWQ0YTVlMjVhNDU3ZmI5YjA3NDg5ZDMxM2I0MWE=';
 
@@ -65,15 +65,17 @@ function updateUI(data) {
     const card = document.getElementById('statusCard');
     const text = document.getElementById('statusText');
 
-    // Expected check: data.status === 'UP' => Green/Online
-    if (data.status === 'UP') {
+    // Bulk status returns an array of services. Find "Fortnite".
+    // Example: [{ serviceInstanceId: 'fortnite', status: 'UP', ... }]
+    const fortniteService = Array.isArray(data) ? data.find(s => s.serviceInstanceId === 'fortnite') : data;
+
+    if (fortniteService && fortniteService.status === 'UP') {
         card.classList.remove('offline');
         card.classList.add('online');
         text.textContent = 'Online';
     } else {
         card.classList.remove('online');
         card.classList.add('offline');
-        // Might show "Maintenance" or just "Offline"
         text.textContent = 'Offline';
     }
 }
