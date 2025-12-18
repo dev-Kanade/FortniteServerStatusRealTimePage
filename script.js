@@ -1,9 +1,9 @@
-const CORS_PROXY = 'https://corsproxy.io/?';
-// Note: Some proxies prefer raw URLs. Trying without encoding first.
-const OAUTH_URL = CORS_PROXY + 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token';
-const STATUS_URL = CORS_PROXY + 'https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite';
-// Public Client ID for Fortnite (known public credential)
-const CLIENT_ID = 'MzQ0NmNkNzI2OTRjNGE0NDg1ZDgxYjc3YWRiYjIxNDE6OTIwOWQ0YTVlMjVhNDU3ZmI5YjA3NDg5ZDMxM2I0MWE=';
+const OAUTH_URL = 'https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token';
+const STATUS_URL = 'https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite';
+
+// Fortnite PC Client Credentials
+const CLIENT_ID = 'ec684b8c687f479fadea3cb2ad83f5c6';
+const CLIENT_SECRET = 'e1f31c211f28413186262d37a13fc84d';
 
 let accessToken = null;
 
@@ -13,7 +13,8 @@ async function getAccessToken() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': `Basic ${CLIENT_ID}`
+                // Calculate Base64 of CLIENT_ID:CLIENT_SECRET
+                'Authorization': `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`
             },
             body: 'grant_type=client_credentials'
         });
