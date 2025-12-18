@@ -18,12 +18,12 @@ async function fetchStatus() {
         }
     } catch (error) {
         console.error('Error fetching status:', error);
-        // Optional: Show error state in UI
+
     }
 }
 
-// Initial fetch
+
 fetchStatus();
 
-// Poll every 1 second
+
 setInterval(fetchStatus, 1000);
