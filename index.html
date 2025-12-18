@@ -36,12 +36,12 @@
 
         .card.up {
             background-color: rgba(0, 128, 0, 0.7);
-            /* 緑 */
+
         }
 
         .card.down {
             background-color: rgba(255, 0, 0, 0.7);
-            /* 赤 */
+
         }
 
         h1 {
@@ -72,14 +72,14 @@
     </div>
 
     <script>
-        const CLIENT_ID = "11f52c3906fb45e39e4f64a585bb4d2d"; // 2025年現在も有効なFortniteクライアントID
+        const CLIENT_ID = "11f52c3906fb45e39e4f64a585bb4d2d";
         const CLIENT_SECRET = "7517be87-fc6f-45ed-9b34-f21d9097683e";
         const BASIC_AUTH = btoa(CLIENT_ID + ":" + CLIENT_SECRET);
 
         const TOKEN_ENDPOINT_ORIG = "https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token";
         const STATUS_ENDPOINT_ORIG = "https://lightswitch-public-service-prod06.ol.epicgames.com/lightswitch/api/service/bulk/status?serviceId=Fortnite";
 
-        // corsproxy.ioを使ってCORS回避
+
         const proxy = "https://corsproxy.io/?";
         const TOKEN_ENDPOINT = proxy + encodeURIComponent(TOKEN_ENDPOINT_ORIG);
         const STATUS_ENDPOINT = proxy + encodeURIComponent(STATUS_ENDPOINT_ORIG);
@@ -177,7 +177,7 @@
             }
         }
 
-        // ページロード時に開始
+
         start();
     </script>
 </body>
