@@ -77,7 +77,7 @@
         const BASIC_AUTH = btoa(CLIENT_ID + ":" + CLIENT_SECRET);
 
         const TOKEN_ENDPOINT_ORIG = "https://account-public-service-prod.ol.epicgames.com/account/api/oauth/token";
-        const STATUS_ENDPOINT_ORIG = "https://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/Fortnite/status";
+        const STATUS_ENDPOINT_ORIG = "http://lightswitch-public-service-prod.ol.epicgames.com/lightswitch/api/service/:serviceId/status";
 
 
         const proxy = "https://corsproxy.io/?";
@@ -184,5 +184,6 @@
 
 
 </html>
+
 
 
